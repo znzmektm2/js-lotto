@@ -1,36 +1,33 @@
-import { $, $All } from "../utils/DOM.js";
+import { $ } from "../utils/DOM.js";
 import View from "./View.js";
+import LottoModel from "./../models/LottoModel.js";
 
 export default class PurchasedLottosView extends View {
-  constructor(element) {
-    super(element);
+  constructor($element) {
     console.log("PurchasedLottosView constructor");
-    this.switchInput = $("#switchInput");
-    this.init();
+    super($element);
   }
 
   reset() {
-    $("#total").innerText = "";
-    this.switchInput.checked = false;
+    $("#switchInput").checked = false;
+    $(".lottoNumberLists").classList.remove("showLottoNumbers");
+    this.hide();
   }
 
-  init() {
-    this.switchBtnHandler();
-  }
+  update(lottos) {
+    const lottoLists = lottos
+      ?.map(
+        (lotto) =>
+          `<li>
+            <span class="icon">🎟️</span>
+            <span class="lottoNumbers"
+              ><span>${[...lotto.values()].join(", ")}</span></span
+            >
+          </li>`
+      )
+      .join("");
 
-  switchBtnHandler() {
-    this.switchInput.addEventListener("click", () => {
-      this.viewLottosNumbers(this.switchInput.checked);
-    });
-  }
-
-  viewLottosNumbers(isChecked) {
-    isChecked === true
-      ? $All(".lottoNumbers").forEach((e) => {
-          e.style.display = "inline";
-        })
-      : $All(".lottoNumbers").forEach((e) => {
-          e.style.display = "none";
-        });
+    $("#total").innerText = lottos.length;
+    $(".lottoNumberLists").innerHTML = lottoLists;
   }
 }

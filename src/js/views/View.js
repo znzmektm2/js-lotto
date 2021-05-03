@@ -1,17 +1,18 @@
 export default class View {
-  constructor(element) {
-    this.element = element;
+  constructor($element) {
+    console.log("View constructor");
+    this.$element = $element;
   }
 
   show() {
-    this.element.hidden = false;
+    this.$element.hidden = false;
   }
 
   hide() {
-    this.element.hidden = true;
+    this.$element.hidden = true;
   }
 
   on(event, handler) {
-    return this.element.addEventListener(event, handler);
+    return this.$element.addEventListener(event, handler);
   }
 }
