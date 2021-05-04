@@ -12,10 +12,12 @@ export const LOTTO = freeze({
   NUM_SIZE: 6,
 });
 
-export const WINNING_NUMBERS = freeze({
-  MIN: 1,
-  MAX: 45,
-  NUM_SIZE: 6,
+export const PRIZZE_MONEY = freeze({
+  3: 5000,
+  4: 50000,
+  5: 1500000,
+  6: 2000000000,
+  BONUS_BALL: 30000000,
 });
 
 export const MSG = freeze({

@@ -1,5 +1,4 @@
 import { LOTTO } from "./constants.js";
-import { $All } from "./DOM.js";
 
 const randomNumber = () => {
   return Math.floor(Math.random() * (LOTTO.MAX + 1 - LOTTO.MIN)) + LOTTO.MIN;
@@ -22,8 +21,4 @@ export const winningNumbers = (winningInputs) => {
   });
 
   return [...winningNums];
-};
-
-export const isCorrectNumbers = () => {
-  return winningNums.size === winningInputs.length;
 };

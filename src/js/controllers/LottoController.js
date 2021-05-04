@@ -1,11 +1,11 @@
-import { $ } from "../utils/DOM.js";
+import { $, $All } from "../utils/DOM.js";
 import PriceFormView from "./../views/PriceFormView.js";
 import PurchasedLottosView from "./../views/PurchasedLottosView.js";
 import WinningNumbersView from "./../views/WinningNumbersView.js";
 import ModalView from "./../views/ModalView.js";
 import { PRICE, MSG } from "./../utils/constants.js";
 import LottoModel from "./../models/LottoModel.js";
-import { isCorrectNumbers } from "../utils/utils.js";
+import { winningNumbers } from "../utils/utils.js";
 
 export default class LottoController {
   constructor() {
@@ -17,6 +17,7 @@ export default class LottoController {
     this.$winningNumbersView = new WinningNumbersView($("#winningNumbersWrap"));
     this.$modalView = new ModalView($("#modalWrap"));
     this.lottoModel = new LottoModel();
+    this.winningInputs = $All("#winningNumbersWrap input");
     this.bindEvents();
   }
 
@@ -70,11 +71,41 @@ export default class LottoController {
   }
 
   submitWinningNubmers() {
-    if (!isCorrectNumbers()) return alert(MSG.INVALID_NUMBERS);
+    this.winningNumbers = winningNumbers(this.winningInputs);
+
+    if (this.winningNumbers.length !== this.winningInputs.length)
+      return alert(MSG.INVALID_NUMBERS);
 
     this.winningStatistics();
     this.$modalView.show();
   }
 
-  winningStatistics() {}
+  winningStatistics() {
+    const winningLotto = this.winningNumbers;
+    const lottos = this.lottoModel.lottos;
+
+    let result = {};
+
+    lottos.map((lotto, i) => {
+      const count = winningLotto.reduce((count, winningNumber, i) => {
+        if (count === 5 && i === 6) {
+          result.BONUS_BALL
+            ? (result.BONUS_BALL = result.BONUS_BALL + 1)
+            : (result.BONUS_BALL = 1);
+
+          return "BONUS_BALL";
+        }
+
+        if (lotto.includes(winningNumber)) count++;
+
+        return count;
+      }, 0);
+
+      if (count < 3 || count === "BONUS_BALL") return;
+
+      result[count] ? (result[count] = result[count] + 1) : (result[count] = 1);
+    });
+
+    console.log("result", result);
+  }
 }
