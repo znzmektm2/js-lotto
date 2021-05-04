@@ -11,16 +11,19 @@ export const lottoNumbers = () => {
     lottoNums.add(randomNumber());
   }
 
-  return lottoNums;
+  return [...lottoNums];
 };
 
-export const isCorrectNumbers = () => {
-  const winningInputs = $All("#winningNumbersWrap input");
+export const winningNumbers = (winningInputs) => {
   let winningNums = new Set();
 
   winningInputs.forEach((input) => {
-    winningNums.add(input.value);
+    winningNums.add(+input.value);
   });
 
+  return [...winningNums];
+};
+
+export const isCorrectNumbers = () => {
   return winningNums.size === winningInputs.length;
 };
