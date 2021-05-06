@@ -7,8 +7,11 @@ export default class WinningNumbersView extends View {
     super($element);
   }
 
-  reset() {
+  reset(winningInputs) {
     this.hide();
-    this.$element.reset();
+    this.$element.reset()
+    winningInputs.forEach((input) => {
+      input.disabled = false;
+    });
   }
 }

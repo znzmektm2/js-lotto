@@ -21,13 +21,14 @@
                 id="priceInput"
                 class="w-100 mr-2 pl-2"
                 placeholder="구입 금액"
+                value="10000"
               />
               <button id="priceSubmitBtn" type="submit" class="btn btn-cyan">
                 확인
               </button>
             </div>
           </form>
-          <section id="perchasedLottosWrap" class="mt-9" hidden>
+          <section id="perchasedLottosWrap" class="mt-9" >
             <div class="d-flex">
               <label class="flex-auto my-0"
                 >총 <span id="total"></span>개를 구매하였습니다.</label
@@ -43,9 +44,9 @@
                 </label>
               </div>
             </div>
-            <ul class="d-flex flex-wrap lottoNumberLists"></ul>
+            <ul class="d-flex flex-wrap lottoNumberLists showLottoNumbers"></ul>
           </section>
-          <form id="winningNumbersWrap" class="mt-9" hidden>
+          <form id="winningNumbersWrap" class="mt-9" >
             <label class="flex-auto d-inline-block mb-3"
               >지난 주 당첨번호 6개와 보너스 넘버 1개를 입력해주세요.</label
             >
@@ -141,27 +142,27 @@
                 <tr class="text-center">
                   <td class="p-3">3개</td>
                   <td class="p-3">5,000</td>
-                  <td class="p-3">n개</td>
+                  <td class="p-3" id="win_3">0개</td>
                 </tr>
                 <tr class="text-center">
                   <td class="p-3">4개</td>
                   <td class="p-3">50,000</td>
-                  <td class="p-3">n개</td>
+                  <td class="p-3" id="win_4">0개</td>
                 </tr>
                 <tr class="text-center">
                   <td class="p-3">5개</td>
                   <td class="p-3">1,500,000</td>
-                  <td class="p-3">n개</td>
+                  <td class="p-3" id="win_5">0개</td>
                 </tr>
                 <tr class="text-center">
                   <td class="p-3">5개 + 보너스볼</td>
                   <td class="p-3">30,000,000</td>
-                  <td class="p-3">n개</td>
+                  <td class="p-3" id="win_BONUS_BALL">0개</td>
                 </tr>
                 <tr class="text-center">
                   <td class="p-3">6개</td>
                   <td class="p-3">2,000,000,000</td>
-                  <td class="p-3">n개</td>
+                  <td class="p-3" id="win_6">0개</td>
                 </tr>
               </tbody>
             </table>

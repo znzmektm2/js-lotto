@@ -2,12 +2,18 @@ import { $, $All } from "../utils/DOM.js";
 import View from "./View.js";
 
 export default class ModalView extends View {
-  constructor($element) {
+  constructor($element, result) {
     console.log("ModalView constructor");
     super($element);
+    this.result = result;
   }
 
-  reset() {
+  reset(result) {
     this.hide();
+    setTimeout(() => {
+      for (const count in result) {
+        $(`#win_${count}`).innerText = '0개';
+      }
+    },250)
   }
 }

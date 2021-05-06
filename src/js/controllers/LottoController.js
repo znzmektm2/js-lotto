@@ -18,6 +18,8 @@ export default class LottoController {
     this.$modalView = new ModalView($("#modalWrap"));
     this.lottoModel = new LottoModel();
     this.winningInputs = $All("#winningNumbersWrap input");
+    this.result = {};
+    this.isChecked = false;
     this.bindEvents();
   }
 
@@ -43,8 +45,10 @@ export default class LottoController {
     $("#retryBtn").addEventListener("click", () => {
       this.$priceFormView.reset();
       this.$purchasedLottosView.reset();
-      this.$winningNumbersView.reset();
-      this.$modalView.reset();
+      this.$winningNumbersView.reset(this.winningInputs);
+      this.$modalView.reset(this.result);
+      this.result = {}
+      this.isChecked = false;
     });
   }
 
@@ -76,26 +80,29 @@ export default class LottoController {
     if (this.winningNumbers.length !== this.winningInputs.length)
       return alert(MSG.INVALID_NUMBERS);
 
-    this.winningStatistics();
+    this.winningInputs.forEach((input) => {
+      input.disabled = true;
+    });
+    this.winningResult();
     this.$modalView.show();
   }
 
-  winningStatistics() {
+  winningResult() {
     const winningLotto = this.winningNumbers;
     const lottos = this.lottoModel.lottos;
+    let result = this.result;
 
-    let result = {};
+    if (!!this.isChecked) return;
 
-    lottos.map((lotto, i) => {
+    lottos.forEach((lotto, i) => {
       const count = winningLotto.reduce((count, winningNumber, i) => {
         if (count === 5 && i === 6) {
           result.BONUS_BALL
-            ? (result.BONUS_BALL = result.BONUS_BALL + 1)
-            : (result.BONUS_BALL = 1);
+              ? (result.BONUS_BALL = result.BONUS_BALL + 1)
+              : (result.BONUS_BALL = 1);
 
           return "BONUS_BALL";
         }
-
         if (lotto.includes(winningNumber)) count++;
 
         return count;
@@ -106,6 +113,11 @@ export default class LottoController {
       result[count] ? (result[count] = result[count] + 1) : (result[count] = 1);
     });
 
+    for (const count in result) {
+      $(`#win_${count}`).innerText = result[count]+'개';
+    }
+
+    this.isChecked = true;
     console.log("result", result);
   }
 }
