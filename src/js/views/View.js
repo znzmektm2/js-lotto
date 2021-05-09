@@ -1,6 +1,5 @@
 export default class View {
   constructor($element) {
-    console.log("View constructor");
     this.$element = $element;
   }
 

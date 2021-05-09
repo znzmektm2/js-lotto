@@ -3,13 +3,12 @@ import PriceFormView from "./../views/PriceFormView.js";
 import PurchasedLottosView from "./../views/PurchasedLottosView.js";
 import WinningNumbersView from "./../views/WinningNumbersView.js";
 import ModalView from "./../views/ModalView.js";
-import { PRICE, MSG , PRIZZE_MONEY} from "./../utils/constants.js";
+import { PRICE, MSG, PRIZZE_MONEY } from "./../utils/constants.js";
 import LottoModel from "./../models/LottoModel.js";
 import { winningNumbers } from "../utils/utils.js";
 
 export default class LottoController {
   constructor() {
-    console.log("LottoController constructor");
     this.$priceFormView = new PriceFormView($("#priceFormWrap"));
     this.$purchasedLottosView = new PurchasedLottosView(
       $("#perchasedLottosWrap")
@@ -48,7 +47,7 @@ export default class LottoController {
       this.$winningNumbersView.reset(this.winningInputs);
       this.$modalView.reset(this.winningResult);
       this.price = 0;
-      this.winningResult = {}
+      this.winningResult = {};
       this.isChecked = false;
     });
   }
@@ -94,7 +93,6 @@ export default class LottoController {
     this.isChecked = true;
   }
 
-
   insertWinningResult() {
     const winningLotto = this.winningNumbers;
 
@@ -102,12 +100,11 @@ export default class LottoController {
 
     let winningResult = this.winningResult;
     lottos.forEach((lotto, i) => {
-
       const count = winningLotto.reduce((count, winningNumber, i) => {
         if (count === 5 && i === 6) {
           winningResult.BONUS_BALL
-              ? (winningResult.BONUS_BALL = winningResult.BONUS_BALL + 1)
-              : (winningResult.BONUS_BALL = 1);
+            ? (winningResult.BONUS_BALL = winningResult.BONUS_BALL + 1)
+            : (winningResult.BONUS_BALL = 1);
 
           return "BONUS_BALL";
         }
@@ -117,12 +114,12 @@ export default class LottoController {
       }, 0);
       if (count < 3 || count === "BONUS_BALL") return;
 
-      winningResult[count] ? (winningResult[count] = winningResult[count] + 1) : (winningResult[count] = 1);
-
+      winningResult[count]
+        ? (winningResult[count] = winningResult[count] + 1)
+        : (winningResult[count] = 1);
     });
     for (const count in winningResult) {
-      $(`#win_${count}`).innerText = winningResult[count]+'개';
-
+      $(`#win_${count}`).innerText = winningResult[count] + "개";
     }
     console.log("winningResult", winningResult);
   }
@@ -133,13 +130,17 @@ export default class LottoController {
 
     for (const count in winningResult) {
       totalPrizeMoney += PRIZZE_MONEY[count] * winningResult[count];
-      console.log('RIZZE_MONEY[count]:',PRIZZE_MONEY[count], 'winningResult[count]:', winningResult[count])
-      console.log('totalPrizeMoney',totalPrizeMoney)
+      console.log(
+        "RIZZE_MONEY[count]:",
+        PRIZZE_MONEY[count],
+        "winningResult[count]:",
+        winningResult[count]
+      );
+      console.log("totalPrizeMoney", totalPrizeMoney);
     }
 
-    console.log('profit:', totalPrizeMoney / this.price * 100)
+    console.log("profit:", (totalPrizeMoney / this.price) * 100);
 
-    $('#profit').innerText = totalPrizeMoney / this.price * 100;
+    $("#profit").innerText = (totalPrizeMoney / this.price) * 100;
   }
-
 }

@@ -3,7 +3,6 @@ import View from "./View.js";
 
 export default class ModalView extends View {
   constructor($element, result) {
-    console.log("ModalView constructor");
     super($element);
     this.result = result;
   }
@@ -12,8 +11,8 @@ export default class ModalView extends View {
     this.hide();
     setTimeout(() => {
       for (const count in result) {
-        $(`#win_${count}`).innerText = '0개';
+        $(`#win_${count}`).innerText = "0개";
       }
-    },250)
+    }, 250);
   }
 }

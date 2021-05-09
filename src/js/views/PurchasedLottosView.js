@@ -4,7 +4,6 @@ import LottoModel from "./../models/LottoModel.js";
 
 export default class PurchasedLottosView extends View {
   constructor($element) {
-    console.log("PurchasedLottosView constructor");
     super($element);
   }
 
