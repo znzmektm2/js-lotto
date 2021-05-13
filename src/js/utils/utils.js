@@ -4,9 +4,9 @@ const randomNumber = () => {
   return Math.floor(Math.random() * (LOTTO.MAX + 1 - LOTTO.MIN)) + LOTTO.MIN;
 };
 
-export const lottoNumbers = () => {
+export const lottoNumbers = (size = LOTTO.NUM_SIZE) => {
   let lottoNums = new Set();
-  while (lottoNums.size < LOTTO.NUM_SIZE) {
+  while (lottoNums.size < size) {
     lottoNums.add(randomNumber());
   }
 
