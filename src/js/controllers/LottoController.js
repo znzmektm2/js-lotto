@@ -95,10 +95,9 @@ export default class LottoController {
 
   insertWinningResult() {
     const winningLotto = this.winningNumbers;
-
     const lottos = this.lottoModel.lottos;
-
     let winningResult = this.winningResult;
+
     lottos.forEach((lotto, i) => {
       const count = winningLotto.reduce((count, winningNumber, i) => {
         if (count === 5 && i === 6) {
@@ -118,10 +117,11 @@ export default class LottoController {
         ? (winningResult[count] = winningResult[count] + 1)
         : (winningResult[count] = 1);
     });
+
     for (const count in winningResult) {
       $(`#win_${count}`).innerText = winningResult[count] + "개";
     }
-    console.log("winningResult", winningResult);
+    // console.log("winningResult", winningResult);
   }
 
   insertProfitResult() {
@@ -130,16 +130,16 @@ export default class LottoController {
 
     for (const count in winningResult) {
       totalPrizeMoney += PRIZZE_MONEY[count] * winningResult[count];
-      console.log(
-        "RIZZE_MONEY[count]:",
-        PRIZZE_MONEY[count],
-        "winningResult[count]:",
-        winningResult[count]
-      );
-      console.log("totalPrizeMoney", totalPrizeMoney);
+      // console.log(
+      //   "RIZZE_MONEY[count]:",
+      //   PRIZZE_MONEY[count],
+      //   "winningResult[count]:",
+      //   winningResult[count]
+      // );
+      // console.log("totalPrizeMoney", totalPrizeMoney);
     }
 
-    console.log("profit:", (totalPrizeMoney / this.price) * 100);
+    // console.log("profit:", (totalPrizeMoney / this.price) * 100);
 
     $("#profit").innerText = (totalPrizeMoney / this.price) * 100;
   }

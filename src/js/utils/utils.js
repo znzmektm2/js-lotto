@@ -5,7 +5,7 @@ const randomNumber = () => {
 };
 
 export const lottoNumbers = (size = LOTTO.NUM_SIZE) => {
-  let lottoNums = new Set();
+  const lottoNums = new Set();
   while (lottoNums.size < size) {
     lottoNums.add(randomNumber());
   }
