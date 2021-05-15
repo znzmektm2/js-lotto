@@ -1,6 +1,6 @@
 import { LOTTO, PRIZZE_MONEY } from "./constants.js";
 
-const randomNumber = () => {
+export const randomNumber = () => {
   return Math.floor(Math.random() * (LOTTO.MAX + 1 - LOTTO.MIN)) + LOTTO.MIN;
 };
 
@@ -13,7 +13,7 @@ export const lottoNumbers = (size = LOTTO.NUM_SIZE) => {
   return [...lottoNums];
 };
 
-export const winningNumbers = (winningInputs) => {
+export const getWinningNumbers = (winningInputs) => {
   let winningNums = new Set();
 
   winningInputs.forEach((input) => {
@@ -23,7 +23,7 @@ export const winningNumbers = (winningInputs) => {
   return [...winningNums];
 };
 
-export const insertWinningResult = (winningLotto, lottos, winningResult) => {
+export const getWinningResult = (winningLotto, lottos, winningResult) => {
   lottos.forEach((lotto, i) => {
     const count = winningLotto.reduce((count, winningNumber, i) => {
       if (count === 5 && i === 6) {

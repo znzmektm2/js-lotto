@@ -1,5 +1,10 @@
 import { MSG } from "../../src/js/utils/constants.js";
-import { lottoNumbers } from "./../../src/js/utils/utils.js";
+import {
+  randomNumber,
+  lottoNumbers,
+  getWinningResult,
+  insertProfitResult,
+} from "./../../src/js/utils/utils.js";
 import { PRIZZE_MONEY } from "./../../src/js/utils/constants.js";
 
 describe("로또 테스트", () => {
@@ -95,8 +100,6 @@ describe("로또 테스트", () => {
     const winningLotto = new Set();
     const lottos = [];
     const winningResult = {};
-    let count = 1;
-    let totalPrizeMoney = 0;
 
     submitPrice({ price: price });
     cy.get(".lottoNumbers span")
@@ -113,7 +116,7 @@ describe("로또 테스트", () => {
           winningLotto.add(v);
         });
         while (winningLotto.size < 8) {
-          winningLotto.add(count++);
+          winningLotto.add(randomNumber());
         }
       });
     cy.get("#winningNumbersWrap input").each((winningNumber, i) => {
@@ -122,59 +125,29 @@ describe("로또 테스트", () => {
     cy.get("#winningNumbersWrap")
       .submit()
       .then(() => {
-        lottos.forEach((lotto, i) => {
-          const count = [...winningLotto].reduce((count, winningNumber, i) => {
-            if (count === 5 && i === 6) {
-              winningResult.BONUS_BALL
-                ? (winningResult.BONUS_BALL = winningResult.BONUS_BALL + 1)
-                : (winningResult.BONUS_BALL = 1);
+        const r = getWinningResult([...winningLotto], lottos, winningResult);
 
-              return "BONUS_BALL";
-            }
-            if (lotto.includes(winningNumber)) count++;
-
-            return count;
-          }, 0);
-          if (count < 3 || count === "BONUS_BALL") return;
-
-          winningResult[count]
-            ? (winningResult[count] = winningResult[count] + 1)
-            : (winningResult[count] = 1);
-        });
-
-        for (const count in winningResult) {
-          cy.get(`#win_${count}`).should(
-            "have.text",
-            winningResult[count] + "개"
-          );
+        for (const count in r) {
+          cy.get(`#win_${count}`).should("have.text", r[count] + "개");
         }
 
-        //
-        for (const count in winningResult) {
-          totalPrizeMoney += PRIZZE_MONEY[count] * winningResult[count];
-        }
-
-        cy.get("#profit").should("have.text", (totalPrizeMoney / price) * 100);
-        console.log(
-          "winningResult",
-          winningResult,
-          (totalPrizeMoney / price) * 100
+        cy.get("#profit").should(
+          "have.text",
+          insertProfitResult(winningResult, price)
         );
       });
   });
-
-  // context("로또 당첨 금액은 고정되어 있는 것으로 가정한다.", () => {
-  //   it("", () => {});
-  // });
 
   it("다시 시작하기 버튼을 누르면 초기화 되서 다시 구매를 시작할 수 있다.", () => {
     submitPrice({ price: 5000 });
     cy.get("#winningNumbersWrap input").each((winningNumber, i, arr) => {
       cy.wrap(winningNumber).type(lottoNumbers(arr.length)[i]);
     });
-
-    cy.get("#winningNumbersWrap").submit();
-    cy.get("#modalWrap").should("be.visible");
+    cy.get("#winningNumbersWrap")
+      .submit()
+      .then(() => {
+        cy.get("#modalWrap").should("be.visible");
+      });
     cy.get("#retryBtn").click();
     cy.get("#priceInput").should("have.value", "");
     cy.get("#perchasedLottosWrap").should("not.be.visible");
