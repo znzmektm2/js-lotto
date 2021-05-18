@@ -1,15 +1,11 @@
-import { $, $All } from "../utils/DOM.js";
+import { $, $winningInputs } from "../utils/DOM.js";
 import PriceFormView from "./../views/PriceFormView.js";
 import PurchasedLottosView from "./../views/PurchasedLottosView.js";
 import WinningNumbersView from "./../views/WinningNumbersView.js";
 import ModalView from "./../views/ModalView.js";
 import { PRICE, MSG } from "./../utils/constants.js";
 import LottoModel from "./../models/LottoModel.js";
-import {
-  insertProfitResult,
-  getWinningResult,
-  getWinningNumbers,
-} from "../utils/utils.js";
+import { isValidWinningNumbers } from "../utils/utils.js";
 
 export default class LottoController {
   constructor() {
@@ -20,9 +16,6 @@ export default class LottoController {
     this.$winningNumbersView = new WinningNumbersView($("#winningNumbersWrap"));
     this.$modalView = new ModalView($("#modalWrap"));
     this.lottoModel = new LottoModel();
-    this.winningInputs = $All("#winningNumbersWrap input");
-    this.winningResult = {};
-    this.isChecked = false;
     this.bindEvents();
   }
 
@@ -32,34 +25,18 @@ export default class LottoController {
       this.submitPrice(e);
     });
 
-    $("#switchInput").addEventListener("click", () => {
-      this.viewLottosNumbers($("#switchInput").checked);
-    });
-
     this.$winningNumbersView.on("submit", (e) => {
       e.preventDefault();
       this.submitWinningNubmers();
     });
 
-    $(".modal-close").addEventListener("click", () => {
-      this.$modalView.hide();
-    });
-
     $("#retryBtn").addEventListener("click", () => {
       this.$priceFormView.reset();
       this.$purchasedLottosView.reset();
-      this.$winningNumbersView.reset(this.winningInputs);
-      this.$modalView.reset(this.winningResult);
+      this.$winningNumbersView.reset();
+      this.$modalView.reset();
       this.price = 0;
-      this.winningResult = {};
-      this.isChecked = false;
     });
-  }
-
-  viewLottosNumbers(isChecked) {
-    isChecked === true
-      ? $(".lottoNumberLists").classList.add("showLottoNumbers")
-      : $(".lottoNumberLists").classList.remove("showLottoNumbers");
   }
 
   submitPrice(e) {
@@ -74,37 +51,29 @@ export default class LottoController {
     e.target.elements.priceInput.disabled = true;
     e.target.elements.priceSubmitBtn.disabled = true;
     this.lottoModel.lottos = price;
-    this.$purchasedLottosView.update(this.lottoModel.lottos);
+    this.$purchasedLottosView.renderLottoLists(this.lottoModel.lottos);
     this.$purchasedLottosView.show();
     this.$winningNumbersView.show();
   }
 
   submitWinningNubmers() {
-    this.winningNumbers = getWinningNumbers(this.winningInputs);
+    const isSubmitted = $("#winningNumbersWrap input").disabled;
 
-    if (this.winningNumbers.length !== this.winningInputs.length)
-      return alert(MSG.INVALID_NUMBERS);
-    this.$modalView.show();
+    if (isSubmitted === false) {
+      if (isValidWinningNumbers($winningInputs))
+        return alert(MSG.INVALID_NUMBERS);
 
-    if (!!this.isChecked) return;
+      this.$modalView.renderWinningResult(
+        $winningInputs,
+        this.lottoModel.lottos,
+        this.price
+      );
 
-    this.winningInputs.forEach((input) => {
-      input.disabled = true;
-    });
-    this.insertWinningResult();
-    $("#profit").innerText = insertProfitResult(this.winningResult, this.price);
-    this.isChecked = true;
-  }
-
-  insertWinningResult() {
-    const winningResult = getWinningResult(
-      this.winningNumbers,
-      this.lottoModel.lottos,
-      this.winningResult
-    );
-
-    for (const count in winningResult) {
-      $(`#win_${count}`).innerText = winningResult[count] + "개";
+      $winningInputs.forEach((input) => {
+        input.disabled = true;
+      });
     }
+
+    this.$modalView.show();
   }
 }

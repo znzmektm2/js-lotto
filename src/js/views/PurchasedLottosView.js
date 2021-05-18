@@ -1,19 +1,36 @@
 import { $ } from "../utils/DOM.js";
 import View from "./View.js";
-import LottoModel from "./../models/LottoModel.js";
 
 export default class PurchasedLottosView extends View {
   constructor($element) {
     super($element);
+    this.$switchInput = $("#switchInput");
+    this.$lottoNumberLists = $(".lottoNumberLists");
+    this.$total = $("#total");
+    this.toggleSwitch();
+  }
+
+  toggleSwitch() {
+    this.$switchInput.addEventListener("click", () => {
+      this.viewLottosNumbers(this.$switchInput.checked);
+    });
   }
 
   reset() {
-    $("#switchInput").checked = false;
-    $(".lottoNumberLists").classList.remove("showLottoNumbers");
     this.hide();
+    this.$total.innerText = "0";
+    this.$lottoNumberLists.innerText = "";
+    this.$switchInput.checked = false;
+    this.$lottoNumberLists.classList.remove("showLottoNumbers");
   }
 
-  update(lottos) {
+  viewLottosNumbers(isChecked) {
+    isChecked === true
+      ? this.$lottoNumberLists.classList.add("showLottoNumbers")
+      : this.$lottoNumberLists.classList.remove("showLottoNumbers");
+  }
+
+  renderLottoLists(lottos) {
     const lottoLists = lottos
       ?.map(
         (lotto) =>
@@ -26,7 +43,7 @@ export default class PurchasedLottosView extends View {
       )
       .join("");
 
-    $("#total").innerText = lottos.length;
-    $(".lottoNumberLists").innerHTML = lottoLists;
+    this.$total.innerText = lottos.length;
+    this.$lottoNumberLists.innerHTML = lottoLists;
   }
 }

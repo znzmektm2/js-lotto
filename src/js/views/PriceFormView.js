@@ -4,13 +4,13 @@ import View from "./View.js";
 export default class PriceFormView extends View {
   constructor($element) {
     super($element);
-    this.reset();
+    this.$priceInput = $("#priceInput");
   }
 
   reset() {
-    this.$element.reset();
-    $("#priceInput").disabled = false;
+    this.$priceInput.value = "";
+    this.$priceInput.disabled = false;
+    this.$priceInput.focus();
     $("#priceSubmitBtn").disabled = false;
-    $("#priceInput").focus();
   }
 }

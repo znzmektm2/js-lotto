@@ -1,4 +1,4 @@
-import { LOTTO, PRIZZE_MONEY } from "./constants.js";
+import { LOTTO, PRIZE_MONEY } from "./constants.js";
 
 export const randomNumber = () => {
   return Math.floor(Math.random() * (LOTTO.MAX + 1 - LOTTO.MIN)) + LOTTO.MIN;
@@ -13,7 +13,18 @@ export const lottoNumbers = (size = LOTTO.NUM_SIZE) => {
   return [...lottoNums];
 };
 
-export const getWinningNumbers = (winningInputs) => {
+export const isValidWinningNumbers = (winningInputs) => {
+  const winningNums = new Set();
+
+  winningInputs.forEach((input) => {
+    if (input.value == "") return;
+    winningNums.add(+input.value);
+  });
+
+  return winningNums.size !== winningInputs.length;
+};
+
+const getWinningNumberArr = (winningInputs) => {
   let winningNums = new Set();
 
   winningInputs.forEach((input) => {
@@ -23,13 +34,17 @@ export const getWinningNumbers = (winningInputs) => {
   return [...winningNums];
 };
 
-export const getWinningResult = (winningLotto, lottos, winningResult) => {
+export const getWinningResult = (winningInputs, lottos) => {
+  const winningNumberArr = getWinningNumberArr(winningInputs);
+  const obj = {};
+  var winningResultArr = [];
+
   lottos.forEach((lotto, i) => {
-    const count = winningLotto.reduce((count, winningNumber, i) => {
+    const rank = winningNumberArr.reduce((count, winningNumber, i) => {
       if (count === 5 && i === 6) {
-        winningResult.BONUS_BALL
-          ? (winningResult.BONUS_BALL = winningResult.BONUS_BALL + 1)
-          : (winningResult.BONUS_BALL = 1);
+        obj.BONUS_BALL
+          ? (obj.BONUS_BALL = obj.BONUS_BALL + 1)
+          : (obj.BONUS_BALL = 1);
 
         return "BONUS_BALL";
       }
@@ -37,22 +52,31 @@ export const getWinningResult = (winningLotto, lottos, winningResult) => {
 
       return count;
     }, 0);
-    if (count < 3 || count === "BONUS_BALL") return;
 
-    winningResult[count]
-      ? (winningResult[count] = winningResult[count] + 1)
-      : (winningResult[count] = 1);
+    if (rank < 3 || rank === "BONUS_BALL") return;
+
+    obj[rank] ? (obj[rank] = obj[rank] + 1) : (obj[rank] = 1);
   });
 
-  return winningResult;
+  for (const winningRank in obj) {
+    winningResultArr.push({ [winningRank]: obj[winningRank] });
+  }
+
+  return winningResultArr;
 };
 
-export const insertProfitResult = (winningResult, price) => {
+export const insertProfitResult = (winningResultArr, price) => {
   let totalPrizeMoney = 0;
 
-  for (const count in winningResult) {
-    totalPrizeMoney += PRIZZE_MONEY[count] * winningResult[count];
-  }
+  PRIZE_MONEY.forEach((prizeRank) => {
+    winningResultArr.forEach((winningRank) => {
+      if (Object.keys(prizeRank).join() === Object.keys(winningRank).join()) {
+        totalPrizeMoney +=
+          +prizeRank[Object.keys(prizeRank)].split(",").join("") *
+          winningRank[Object.keys(winningRank)];
+      }
+    });
+  });
 
   return (totalPrizeMoney / price) * 100;
 };

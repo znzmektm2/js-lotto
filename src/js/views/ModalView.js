@@ -1,18 +1,56 @@
-import { $, $All } from "../utils/DOM.js";
 import View from "./View.js";
+import { $ } from "../utils/DOM.js";
+import { getWinningResult, insertProfitResult } from "../utils/utils.js";
+import { PRIZE_MONEY } from "./../utils/constants.js";
 
 export default class ModalView extends View {
   constructor($element, result) {
     super($element);
     this.result = result;
+    this.closeModal();
+    this.profit = $("#profit");
+    this.tbody = $("#modalWrap tbody");
   }
 
-  reset(result) {
+  closeModal() {
+    $(".modal-close").addEventListener("click", () => {
+      this.hide();
+    });
+  }
+
+  reset() {
     this.hide();
     setTimeout(() => {
-      for (const count in result) {
-        $(`#win_${count}`).innerText = "0개";
-      }
+      this.tbody.innerText = "";
+      this.profit.innerText = "0";
     }, 250);
+  }
+
+  renderWinningResult($winningInputs, lottos, price) {
+    const winningResultArr = getWinningResult($winningInputs, lottos);
+    let tbody = "";
+
+    PRIZE_MONEY.forEach((prizeRank) => {
+      let count = "0";
+
+      winningResultArr.forEach((winningRank) => {
+        if (Object.keys(prizeRank).join() === Object.keys(winningRank).join()) {
+          count = winningRank[Object.keys(winningRank).join()];
+        }
+      });
+
+      tbody += `<tr class="text-center">
+                    <td class="p-3">${
+                      Object.keys(prizeRank).join() === "BONUS_BALL"
+                        ? "5개 + 보너스볼"
+                        : Object.keys(prizeRank) + "개"
+                    }</td>
+                    <td class="p-3">${prizeRank[Object.keys(prizeRank)]}</td>
+                    <td class="p-3">${count}개</td>
+                    </tr>`;
+    });
+
+    this.tbody.innerHTML = tbody;
+    this.profit.innerText = insertProfitResult(winningResultArr, price);
   }
 }

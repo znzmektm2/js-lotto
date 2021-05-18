@@ -12,13 +12,13 @@ export const LOTTO = freeze({
   NUM_SIZE: 6,
 });
 
-export const PRIZZE_MONEY = freeze({
-  3: 5000,
-  4: 50000,
-  5: 1500000,
-  6: 2000000000,
-  BONUS_BALL: 30000000,
-});
+export const PRIZE_MONEY = freeze([
+  freeze({ 3: "5,000" }),
+  freeze({ 4: "50,000" }),
+  freeze({ 5: "1,500,000" }),
+  freeze({ BONUS_BALL: "30,000,000" }),
+  freeze({ 6: "2,000,000,000" }),
+]);
 
 export const MSG = freeze({
   INVALID_PRICE_UNIT: `${PRICE.UNIT}원 단위로 금액을 입력해 주세요.`,
