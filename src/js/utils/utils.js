@@ -24,8 +24,8 @@ export const isValidWinningNumbers = (winningInputs) => {
   return winningNums.size !== winningInputs.length;
 };
 
-const getWinningNumberArr = (winningInputs) => {
-  let winningNums = new Set();
+export const getWinningNumberArr = (winningInputs) => {
+  const winningNums = new Set();
 
   winningInputs.forEach((input) => {
     winningNums.add(+input.value);
@@ -34,13 +34,12 @@ const getWinningNumberArr = (winningInputs) => {
   return [...winningNums];
 };
 
-export const getWinningResult = (winningInputs, lottos) => {
-  const winningNumberArr = getWinningNumberArr(winningInputs);
+export const getWinningResult = (winningNumsArr, lottos) => {
   const obj = {};
-  var winningResultArr = [];
+  const winningResultArr = [];
 
   lottos.forEach((lotto, i) => {
-    const rank = winningNumberArr.reduce((count, winningNumber, i) => {
+    const rank = winningNumsArr.reduce((count, winningNumber, i) => {
       if (count === 5 && i === 6) {
         obj.BONUS_BALL
           ? (obj.BONUS_BALL = obj.BONUS_BALL + 1)

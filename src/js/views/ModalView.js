@@ -1,6 +1,10 @@
 import View from "./View.js";
 import { $ } from "../utils/DOM.js";
-import { getWinningResult, insertProfitResult } from "../utils/utils.js";
+import {
+  getWinningNumberArr,
+  getWinningResult,
+  insertProfitResult,
+} from "../utils/utils.js";
 import { PRIZE_MONEY } from "./../utils/constants.js";
 
 export default class ModalView extends View {
@@ -27,12 +31,12 @@ export default class ModalView extends View {
   }
 
   renderWinningResult($winningInputs, lottos, price) {
-    const winningResultArr = getWinningResult($winningInputs, lottos);
+    const winningNumsArr = getWinningNumberArr($winningInputs);
+    const winningResultArr = getWinningResult(winningNumsArr, lottos);
+    let count = "0";
     let tbody = "";
 
     PRIZE_MONEY.forEach((prizeRank) => {
-      let count = "0";
-
       winningResultArr.forEach((winningRank) => {
         if (Object.keys(prizeRank).join() === Object.keys(winningRank).join()) {
           count = winningRank[Object.keys(winningRank).join()];
