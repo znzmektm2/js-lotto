@@ -1,11 +1,10 @@
-import { MSG } from "../../src/js/utils/constants.js";
+import { MSG, PRIZE_MONEY } from "../../src/js/utils/constants.js";
 import {
   randomNumber,
   lottoNumbers,
   getWinningResult,
   insertProfitResult,
 } from "./../../src/js/utils/utils.js";
-import { PRIZZE_MONEY } from "./../../src/js/utils/constants.js";
 
 describe("로또 테스트", () => {
   beforeEach(() => {
@@ -97,9 +96,8 @@ describe("로또 테스트", () => {
 
   it("결과 확인하기 버튼을 누르면 당첨 통계, 수익률을 모달로 확인할 수 있다.", () => {
     const price = 5000;
-    const winningLotto = new Set();
+    const winningNums = new Set();
     const lottos = [];
-    const winningResult = {};
 
     submitPrice({ price: price });
     cy.get(".lottoNumbers span")
@@ -113,27 +111,38 @@ describe("로또 테스트", () => {
       })
       .then(() => {
         lottos[0].forEach((v) => {
-          winningLotto.add(v);
+          winningNums.add(v);
         });
-        while (winningLotto.size < 8) {
-          winningLotto.add(randomNumber());
+        while (winningNums.size < 8) {
+          winningNums.add(randomNumber());
         }
       });
     cy.get("#winningNumbersWrap input").each((winningNumber, i) => {
-      cy.wrap(winningNumber).type([...winningLotto][i]);
+      cy.wrap(winningNumber).type([...winningNums][i]);
     });
     cy.get("#winningNumbersWrap")
       .submit()
       .then(() => {
-        const r = getWinningResult([...winningLotto], lottos, winningResult);
+        const winningResultArr = getWinningResult([...winningNums], lottos);
 
-        for (const count in r) {
-          cy.get(`#win_${count}`).should("have.text", r[count] + "개");
-        }
+        cy.get("#modalWrap tbody tr").each((tr, i) => {
+          let count = "0";
+
+          winningResultArr.forEach((winningRank) => {
+            if (
+              Object.keys(PRIZE_MONEY[i]).join() ===
+              Object.keys(winningRank).join()
+            ) {
+              count = winningRank[Object.keys(winningRank).join()];
+            }
+          });
+
+          expect(tr.find("td").last()).to.have.text(`${count}개`);
+        });
 
         cy.get("#profit").should(
           "have.text",
-          insertProfitResult(winningResult, price)
+          insertProfitResult(winningResultArr, price)
         );
       });
   });
